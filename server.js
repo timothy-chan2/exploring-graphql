@@ -1,4 +1,6 @@
-const { graphql, buildSchema } = require("graphql");
+const { buildSchema } = require("graphql");
+const express = require("express");
+const { createHandler } = require("graphql-http/lib/use/express");
  
 // Construct a schema
 const schema = buildSchema(`
@@ -13,12 +15,18 @@ const rootValue = {
     return "Hello world!";
   }
 };
- 
-// Run the GraphQL query '{ hello }'
-graphql({
-  schema,
-  source: "{ hello }",
-  rootValue
-}).then(response => {
-  console.log(response.data.hello);
-});
+
+const app = express();
+
+// GraphQL handler
+app.all(
+  "/graphql",
+  createHandler({
+    schema: schema,
+    rootValue: rootValue
+  })
+);
+
+// Start the server
+app.listen(4000);
+console.log("GraphQL API server running at http://localhost:4000/graphql");
