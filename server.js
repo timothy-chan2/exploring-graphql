@@ -3,16 +3,25 @@ const express = require("express");
 const { createHandler } = require("graphql-http/lib/use/express");
  
 // Construct a schema
+// ! after the type means that it cannot be null
 const schema = buildSchema(`
   type Query {
-    hello: String
+    quoteOfTheDay: String
+    random: Float!
+    roolThreeDice: [Int]
   }
 `);
  
 // The resolver function for each API endpoint
 const rootValue = {
-  hello() {
-    return "Hello world!";
+  quoteOfTheDay() {
+    return Math.random() < 0.5 ? "First quote" : "Second quote";
+  },
+  random() {
+    return Math.random();
+  },
+  roolThreeDice() {
+    return [1, 2, 3].map(_ => 1 + Math.floor(Math.random() * 6));
   }
 };
 
