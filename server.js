@@ -5,13 +5,39 @@ const { createHandler } = require("graphql-http/lib/use/express");
 // Construct a schema
 // ! after the type means that it cannot be null
 const schema = buildSchema(`
+  type RandomDie {
+    numSides: Int!
+    rollOnce: Int!
+    roll(numRolls: Int!): [Int]
+  }
+  
   type Query {
     quoteOfTheDay: String
     random: Float!
-    rollDice(numDice: Int!, numSides: Int): [Int]
+    rollDice(numSides: Int): RandomDie
   }
 `);
- 
+
+// GraphQL object type
+class RandomDie {
+  constructor(numSides) {
+    this.numSides = numSides;
+  };
+
+  rollOnce() {
+    return 1 + Math.floor(Math.random() * this.numSides);
+  };
+
+  roll({ numRolls }) {
+    const result = [];
+    for (let i = 0; i < numRolls; i++) {
+      result.push(this.rollOnce());
+    }
+    
+    return result;
+  };
+};
+
 // The resolver function for each API endpoint
 const rootValue = {
   quoteOfTheDay() {
@@ -20,13 +46,8 @@ const rootValue = {
   random() {
     return Math.random();
   },
-  rollDice({ numDice, numSides }) {
-    const result = [];
-    for (let i = 0; i < numDice; i++) {
-      result.push(1 + Math.floor(Math.random() * (numSides || 6)));
-    }
-    
-    return result;
+  rollDice({ numSides }) {
+    return new RandomDie(numSides || 6);
   }
 };
 
