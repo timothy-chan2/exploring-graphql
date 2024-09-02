@@ -1,11 +1,19 @@
-const rolls = 3;
-const sides = 6;
-const query = `query DiceAndQuote($rolls: Int!, $sides: Int) {
-  rollDice(numSides: $sides) {
-    rollOnce
-    roll(numRolls: $rolls)
-  },
-  quoteOfTheDay
+// const rolls = 3;
+// const sides = 6;
+// const query = `query DiceAndQuote($rolls: Int!, $sides: Int) {
+//   rollDice(numSides: $sides) {
+//     rollOnce
+//     roll(numRolls: $rolls)
+//   },
+//   quoteOfTheDay
+// }`;
+
+const author = "Joe";
+const content = "Ahoy there!";
+const query = `mutation CreateMessage($input: MessageInput) {
+  createMessage(input: $input) {
+    id
+  }
 }`;
  
 fetch("http://localhost:4000/graphql", {
@@ -16,7 +24,13 @@ fetch("http://localhost:4000/graphql", {
   },
   body: JSON.stringify({
     query,
-    variables: { rolls, sides },
+    //variables: { rolls, sides },
+    variables: {
+      input: {
+        author,
+        content
+      }
+    }
   }),
 })
 .then(response => response.json())
