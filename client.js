@@ -13,9 +13,18 @@ const content = "Ahoy there!";
 const query = `mutation CreateMessage($input: MessageInput) {
   createMessage(input: $input) {
     id
+    content
+    author
   }
 }`;
  
+// const query = `query ViewMessage {
+//   getMessage(id: "14ecc38e5ba39090ad62") {
+//     content
+//     author
+//   }
+// }`;
+
 fetch("http://localhost:4000/graphql", {
   method: "POST",
   headers: {
